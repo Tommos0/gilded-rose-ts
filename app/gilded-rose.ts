@@ -1,3 +1,4 @@
+// leave this class alone. Thanks, goblin.
 export class Item {
     name: string;
     sellIn: number;
