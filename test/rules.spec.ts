@@ -1,5 +1,5 @@
-import { ConjuredItem, Item, updateItem } from '../app/gilded-rose';
 import { expect } from 'chai';
+import { ConjuredItem, Item, ItemName, updateItem } from '../app/gilded-rose';
 
 describe('At the end of each day our system lowers both values for every item', () => {
     let item: Item;
@@ -61,10 +61,10 @@ describe('The Quality of an item is never negative', () => {
 describe('"Aged Brie" actually increases in Quality the older it gets', () => {
     // also increase doubly after sellIn.
     const items = [
-        new Item('Aged Brie', 2, 10),
-        new Item('Aged Brie', 4, 2),
-        new Item('Aged Brie', 3, 9),
-        new Item('Aged Brie', 4, 10),
+        new Item(ItemName.Brie, 2, 10),
+        new Item(ItemName.Brie, 4, 2),
+        new Item(ItemName.Brie, 3, 9),
+        new Item(ItemName.Brie, 4, 10),
     ];
 
     const days = 10;
@@ -86,10 +86,10 @@ describe('"Aged Brie" actually increases in Quality the older it gets', () => {
 
 describe('The Quality of an item is never more than 50', () => {
     const items = [
-        new Item('Aged Brie', 2, 10),
-        new Item('Aged Brie', 4, 2),
-        new Item('Aged Brie', 3, 9),
-        new Item('Aged Brie', 4, 10),
+        new Item(ItemName.Brie, 2, 10),
+        new Item(ItemName.Brie, 4, 2),
+        new Item(ItemName.Brie, 3, 9),
+        new Item(ItemName.Brie, 4, 10),
     ];
 
     const days = 100;
@@ -113,40 +113,31 @@ describe('"Sulfuras", being a legendary item, never has to be sold or decreases 
     // "Sulfuras" is a legendary item and as such its Quality is 80 and it never alters.
 
     const items = [
-        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
-        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
-        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
-        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
+        new Item(ItemName.Sulfuras, 10, 80),
+        new Item(ItemName.Sulfuras, 10, 80),
+        new Item(ItemName.Sulfuras, 10, 80),
+        new Item(ItemName.Sulfuras, 10, 80),
     ];
 
     const days = 100;
 
-    for (const item of items) {
-        for (let i = 0; i < days; i++) {
-            updateItem(item);
-        }
-    }
-
     it('quality stays 80', () => {
         for (const item of items) {
-            expect(item.quality).to.equal(80);
-        }
-    });
-
-    it('sellIn doesnt change', () => {
-        for (const item of items) {
-            expect(item.sellIn).to.equal(10);
+            for (let i = 0; i < days; i++) {
+                updateItem(item);
+                expect(item.quality).to.equal(80);
+            }
         }
     });
 });
 
 describe('Backstage pass', () => {
     const items = [
-        new Item('Backstage passes to a TAFKAL80ETC concert', 12, 5),
-        new Item('Backstage passes to a TAFKAL80ETC concert', 4, 2),
-        new Item('Backstage passes to a TAFKAL80ETC concert', 9, 9),
-        new Item('Backstage passes to a TAFKAL80ETC concert', 13, 1),
-        new Item('Backstage passes to a TAFKAL80ETC concert', 29, 75),
+        new Item(ItemName.Pass, 12, 5),
+        new Item(ItemName.Pass, 4, 2),
+        new Item(ItemName.Pass, 9, 9),
+        new Item(ItemName.Pass, 13, 1),
+        new Item(ItemName.Pass, 29, 75),
     ];
 
     const days = 100;
@@ -179,17 +170,18 @@ describe('Backstage pass', () => {
     });
 });
 
-describe('Conjured item', () => {
+describe('"Conjured" items degrade in Quality twice as fast as normal items', () => {
     const items = [
         new ConjuredItem('a', 2, 10),
         new ConjuredItem('a', 4, 2),
         new ConjuredItem('a', 3, 9),
         new ConjuredItem('a', 4, 10),
+        new ConjuredItem('a', 4, 10),
     ];
 
     const days = 100;
 
-    it('follows the rules', () => {
+    it('degrades 2x as fast', () => {
         for (const item of items) {
             for (let i = 0; i < days; i++) {
                 const lastDaySellIn = item.sellIn;
@@ -197,10 +189,10 @@ describe('Conjured item', () => {
                 updateItem(item);
                 if (lastDaySellIn > 0) {
                     expect(item.quality).to.equal(Math.max(0, lastDayQuality - 2));
+                } else {
+                    expect(item.quality).to.equal(Math.max(0, lastDayQuality - 4));
                 }
             }
         }
     });
 });
-
-// "Conjured" items degrade in Quality twice as fast as normal items
