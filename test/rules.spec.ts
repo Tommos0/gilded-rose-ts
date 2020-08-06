@@ -49,7 +49,7 @@ describe('The Quality of an item is never negative', () => {
     ];
 
     for (const item of items) {
-        it('quality stays above 0', () => {
+        it('quality stays above 0 ' + JSON.stringify(item), () => {
             for (let i = 0; i < 10; i++) {
                 item.update();
             }
