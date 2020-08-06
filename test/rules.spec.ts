@@ -1,4 +1,4 @@
-import { Item, updateItem } from '../app/gilded-rose';
+import { ConjuredItem, Item, updateItem } from '../app/gilded-rose';
 import { expect } from 'chai';
 
 describe('At the end of each day our system lowers both values for every item', () => {
@@ -174,6 +174,30 @@ describe('Backstage pass', () => {
                     expectedQuality = lastDayQuality + 2;
                 }
                 expect(item.quality).to.equal(Math.min(50, expectedQuality));
+            }
+        }
+    });
+});
+
+describe('Conjured item', () => {
+    const items = [
+        new ConjuredItem('a', 2, 10),
+        new ConjuredItem('a', 4, 2),
+        new ConjuredItem('a', 3, 9),
+        new ConjuredItem('a', 4, 10),
+    ];
+
+    const days = 100;
+
+    it('follows the rules', () => {
+        for (const item of items) {
+            for (let i = 0; i < days; i++) {
+                const lastDaySellIn = item.sellIn;
+                const lastDayQuality = item.quality;
+                updateItem(item);
+                if (lastDaySellIn > 0) {
+                    expect(item.quality).to.equal(Math.max(0, lastDayQuality - 2));
+                }
             }
         }
     });
