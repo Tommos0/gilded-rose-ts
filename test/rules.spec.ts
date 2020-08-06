@@ -113,10 +113,10 @@ describe('"Sulfuras", being a legendary item, never has to be sold or decreases 
     // "Sulfuras" is a legendary item and as such its Quality is 80 and it never alters.
 
     const items = [
-        new Item('Sulfuras, Hand of Ragnaros', 2, 80),
-        new Item('Sulfuras, Hand of Ragnaros', 4, 80),
-        new Item('Sulfuras, Hand of Ragnaros', 3, 80),
-        new Item('Sulfuras, Hand of Ragnaros', 4, 80),
+        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
+        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
+        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
+        new Item('Sulfuras, Hand of Ragnaros', 10, 80),
     ];
 
     const days = 100;
@@ -130,6 +130,12 @@ describe('"Sulfuras", being a legendary item, never has to be sold or decreases 
     it('quality stays 80', () => {
         for (const item of items) {
             expect(item.quality).to.equal(80);
+        }
+    });
+
+    it('sellIn doesnt change', () => {
+        for (const item of items) {
+            expect(item.sellIn).to.equal(10);
         }
     });
 });
@@ -153,20 +159,21 @@ describe('Backstage pass', () => {
                 updateItem(item);
 
                 // an item can never have its Quality increase above 50
-                // expect(item.quality).to.be.lte(50);
+                expect(item.quality).to.be.lte(50);
+
+                let expectedQuality = lastDayQuality + 1;
+
                 if (lastDaySellIn <= 0) {
                     // Quality drops to 0 after the concert
-                    expect(item.quality).to.equal(0);
+                    expectedQuality = 0;
                 } else if (lastDaySellIn <= 5) {
                     // Quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less
-                    expect(item.quality).to.equal(lastDayQuality + 3);
+                    expectedQuality = lastDayQuality + 3;
                 } else if (lastDaySellIn <= 10) {
                     // Quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less
-                    expect(item.quality).to.equal(lastDayQuality + 2);
-                } else {
-                    // - "Backstage passes", like aged brie, increases in Quality as its SellIn value approaches;
-                    expect(item.quality).to.equal(lastDayQuality + 1);
+                    expectedQuality = lastDayQuality + 2;
                 }
+                expect(item.quality).to.equal(Math.min(50, expectedQuality));
             }
         }
     });
