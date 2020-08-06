@@ -10,13 +10,13 @@ export class Item {
         this.sellIn = sellIn;
         this.quality = quality;
     }
+}
 
-    update(): void {
-        this.quality = nextQuality(this);
+export function updateItem(item: Item): void {
+    item.quality = nextQuality(item);
 
-        if (this.name != ItemName.Sulfuras) {
-            this.sellIn = this.sellIn - 1;
-        }
+    if (item.name != ItemName.Sulfuras) {
+        item.sellIn = item.sellIn - 1;
     }
 }
 
@@ -32,7 +32,7 @@ export class GildedRose {
     constructor(public items: Item[] = []) {}
 
     updateQuality(): Item[] {
-        this.items.forEach((item) => item.update());
+        this.items.forEach(updateItem);
         return this.items;
     }
 }
