@@ -37,14 +37,14 @@ const clamp = (f: qualityFunc) => (item) => Math.max(0, Math.min(50, f(item)));
 export const nextQuality: qualityFunc = (item) => {
     const sDefault = Symbol();
 
-    const itemQualityMap = {
+    const itemNameQualityFuncMap = {
         [ItemName.Brie]: clamp((item) => item.quality + (item.sellIn <= 0 ? 2 : 1)),
         [ItemName.Pass]: clamp(nextQualityPass),
         [ItemName.Sulfuras]: (_) => 80,
         [sDefault]: clamp((item) => item.quality - (item.sellIn > 0 ? 1 : 2)),
     };
 
-    return (itemQualityMap[item.name] || itemQualityMap[sDefault])(item);
+    return (itemNameQualityFuncMap[item.name] || itemNameQualityFuncMap[sDefault])(item);
 };
 
 export const updateItem: (item: Item) => void = (item) => {
