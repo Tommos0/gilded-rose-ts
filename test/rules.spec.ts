@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ConjuredItem, Item, ItemName } from '../app/gilded-rose';
+import { ConjuredItem, Item, ItemName, updateItem } from '../app/gilded-rose';
 
 describe('At the end of each day our system lowers both values for every item', () => {
     let item: Item;
@@ -10,11 +10,11 @@ describe('At the end of each day our system lowers both values for every item', 
     });
 
     it('decreases quality', () => {
-        item.update();
+        updateItem(item);
         expect(item.quality).to.equal(startQuality - 1);
     });
     it('decreases sellIn', () => {
-        item.update();
+        updateItem(item);
         expect(item.sellIn).to.equal(startSellIn - 1);
     });
 });
@@ -29,13 +29,13 @@ describe('Once the sell by date has passed, Quality degrades twice as fast', () 
     });
 
     it('decreases quality by 1 at first', () => {
-        item.update();
+        updateItem(item);
         expect(item.quality).to.equal(startQuality - 1);
     });
     it('decreases quality by 2 after sell by date passed', () => {
-        item.update(); // -1
-        item.update(); // -1
-        item.update(); // -2
+        updateItem(item); // -1
+        updateItem(item); // -1
+        updateItem(item); // -2
         expect(item.quality).to.equal(startQuality - 4);
     });
 });
@@ -51,7 +51,7 @@ describe('The Quality of an item is never negative', () => {
     for (const item of items) {
         it('quality stays above 0 ' + JSON.stringify(item), () => {
             for (let i = 0; i < 10; i++) {
-                item.update();
+                updateItem(item);
             }
             expect(item.quality).to.be.gte(0);
         });
@@ -73,7 +73,7 @@ describe('"Aged Brie" actually increases in Quality the older it gets', () => {
         it('quality increases by one every day (and 2 after sellIn)' + JSON.stringify(item), () => {
             for (let i = 0; i < days; i++) {
                 const lastDayQuality = item.quality;
-                item.update();
+                updateItem(item);
                 if (item.sellIn >= 0) {
                     expect(item.quality).to.equal(lastDayQuality + 1);
                 } else {
@@ -97,7 +97,7 @@ describe('The Quality of an item is never more than 50', () => {
     for (const item of items) {
         it('quality never above 50' + JSON.stringify(item), () => {
             for (let i = 0; i < days; i++) {
-                item.update();
+                updateItem(item);
                 expect(item.quality).to.be.lte(50);
             }
         });
@@ -124,7 +124,7 @@ describe('"Sulfuras", being a legendary item, never has to be sold or decreases 
     it('quality stays 80', () => {
         for (const item of items) {
             for (let i = 0; i < days; i++) {
-                item.update();
+                updateItem(item);
                 expect(item.quality).to.equal(80);
             }
         }
@@ -147,7 +147,7 @@ describe('Backstage pass', () => {
             for (let i = 0; i < days; i++) {
                 const lastDaySellIn = item.sellIn;
                 const lastDayQuality = item.quality;
-                item.update();
+                updateItem(item);
 
                 // an item can never have its Quality increase above 50
                 expect(item.quality).to.be.lte(50);
@@ -186,7 +186,7 @@ describe('"Conjured" items degrade in Quality twice as fast as normal items', ()
             for (let i = 0; i < days; i++) {
                 const lastDaySellIn = item.sellIn;
                 const lastDayQuality = item.quality;
-                item.update();
+                updateItem(item);
                 if (lastDaySellIn > 0) {
                     expect(item.quality).to.equal(Math.max(0, lastDayQuality - 2));
                 } else {
