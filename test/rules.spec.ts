@@ -1,19 +1,175 @@
-// - All items have a SellIn value which denotes the number of days we have to sell the item
-// - All items have a Quality value which denotes how valuable the item is
-// - At the end of each day our system lowers both values for every item
-//
-// Pretty simple, right? Well this is where it gets interesting:
-//
-//     - Once the sell by date has passed, Quality degrades twice as fast
-// - The Quality of an item is never negative
-// - "Aged Brie" actually increases in Quality the older it gets
-// - The Quality of an item is never more than 50
-// - "Sulfuras", being a legendary item, never has to be sold or decreases in Quality
-// - "Backstage passes", like aged brie, increases in Quality as its SellIn value approaches;
-// Quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less but
-// Quality drops to 0 after the concert
+import { Item, updateItem } from '../app/gilded-rose';
+import { expect } from 'chai';
+
+describe('At the end of each day our system lowers both values for every item', () => {
+    let item: Item;
+    const startSellIn = 6;
+    const startQuality = 7;
+    beforeEach(() => {
+        item = new Item('a thing', startSellIn, startQuality);
+    });
+
+    it('decreases quality', () => {
+        updateItem(item);
+        expect(item.quality).to.equal(startQuality - 1);
+    });
+    it('decreases sellIn', () => {
+        updateItem(item);
+        expect(item.sellIn).to.equal(startSellIn - 1);
+    });
+});
+
+describe('Once the sell by date has passed, Quality degrades twice as fast', () => {
+    let item: Item;
+    const startSellIn = 2;
+    const startQuality = 10;
+
+    beforeEach(() => {
+        item = new Item('a thing', startSellIn, startQuality);
+    });
+
+    it('decreases quality by 1 at first', () => {
+        updateItem(item);
+        expect(item.quality).to.equal(startQuality - 1);
+    });
+    it('decreases quality by 2 after sell by date passed', () => {
+        updateItem(item); // -1
+        updateItem(item); // -1
+        updateItem(item); // -2
+        expect(item.quality).to.equal(startQuality - 4);
+    });
+});
+
+describe('The Quality of an item is never negative', () => {
+    const items = [
+        new Item('a', 2, 10),
+        new Item('a', 4, 2),
+        new Item('a', 3, 9),
+        new Item('a', 4, 10),
+    ];
+
+    for (const item of items) {
+        it('quality stays above 0', () => {
+            for (let i = 0; i < 10; i++) {
+                updateItem(item);
+            }
+            expect(item.quality).to.be.gte(0);
+        });
+    }
+});
+
+describe('"Aged Brie" actually increases in Quality the older it gets', () => {
+    // also increase doubly after sellIn.
+    const items = [
+        new Item('Aged Brie', 2, 10),
+        new Item('Aged Brie', 4, 2),
+        new Item('Aged Brie', 3, 9),
+        new Item('Aged Brie', 4, 10),
+    ];
+
+    const days = 10;
+
+    for (const item of items) {
+        it('quality increases by one every day (and 2 after sellIn)' + JSON.stringify(item), () => {
+            for (let i = 0; i < days; i++) {
+                const lastDayQuality = item.quality;
+                updateItem(item);
+                if (item.sellIn >= 0) {
+                    expect(item.quality).to.equal(lastDayQuality + 1);
+                } else {
+                    expect(item.quality).to.equal(lastDayQuality + 2);
+                }
+            }
+        });
+    }
+});
+
+describe('The Quality of an item is never more than 50', () => {
+    const items = [
+        new Item('Aged Brie', 2, 10),
+        new Item('Aged Brie', 4, 2),
+        new Item('Aged Brie', 3, 9),
+        new Item('Aged Brie', 4, 10),
+    ];
+
+    const days = 100;
+
+    for (const item of items) {
+        it('quality never above 50' + JSON.stringify(item), () => {
+            for (let i = 0; i < days; i++) {
+                updateItem(item);
+                expect(item.quality).to.be.lte(50);
+            }
+        });
+    }
+    it('brie quality === 50 after many days', () => {
+        for (const item of items) {
+            expect(item.quality).to.equal(50);
+        }
+    });
+});
+
+describe('"Sulfuras", being a legendary item, never has to be sold or decreases in Quality', () => {
+    // "Sulfuras" is a legendary item and as such its Quality is 80 and it never alters.
+
+    const items = [
+        new Item('Sulfuras, Hand of Ragnaros', 2, 80),
+        new Item('Sulfuras, Hand of Ragnaros', 4, 80),
+        new Item('Sulfuras, Hand of Ragnaros', 3, 80),
+        new Item('Sulfuras, Hand of Ragnaros', 4, 80),
+    ];
+
+    const days = 100;
+
+    for (const item of items) {
+        for (let i = 0; i < days; i++) {
+            updateItem(item);
+        }
+    }
+
+    it('quality stays 80', () => {
+        for (const item of items) {
+            expect(item.quality).to.equal(80);
+        }
+    });
+});
+
+describe('Backstage pass', () => {
+    const items = [
+        new Item('Backstage passes to a TAFKAL80ETC concert', 12, 5),
+        new Item('Backstage passes to a TAFKAL80ETC concert', 4, 2),
+        new Item('Backstage passes to a TAFKAL80ETC concert', 9, 9),
+        new Item('Backstage passes to a TAFKAL80ETC concert', 13, 1),
+        new Item('Backstage passes to a TAFKAL80ETC concert', 29, 75),
+    ];
+
+    const days = 100;
+
+    it('follows the rules', () => {
+        for (const item of items) {
+            for (let i = 0; i < days; i++) {
+                const lastDaySellIn = item.sellIn;
+                const lastDayQuality = item.quality;
+                updateItem(item);
+
+                // an item can never have its Quality increase above 50
+                // expect(item.quality).to.be.lte(50);
+                if (lastDaySellIn <= 0) {
+                    // Quality drops to 0 after the concert
+                    expect(item.quality).to.equal(0);
+                } else if (lastDaySellIn <= 5) {
+                    // Quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less
+                    expect(item.quality).to.equal(lastDayQuality + 3);
+                } else if (lastDaySellIn <= 10) {
+                    // Quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less
+                    expect(item.quality).to.equal(lastDayQuality + 2);
+                } else {
+                    // - "Backstage passes", like aged brie, increases in Quality as its SellIn value approaches;
+                    expect(item.quality).to.equal(lastDayQuality + 1);
+                }
+            }
+        }
+    });
+});
 
 // "Conjured" items degrade in Quality twice as fast as normal items
-
-// Just for clarification, an item can never have its Quality increase above 50, however "Sulfuras" is a
-// legendary item and as such its Quality is 80 and it never alters.
