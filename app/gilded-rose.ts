@@ -10,6 +10,14 @@ export class Item {
     }
 }
 
+export class ConjuredItem extends Item {
+    conjured = true;
+}
+
+function isConjuredItem(item: Item): item is ConjuredItem {
+    return (item as any).conjured;
+}
+
 export enum ItemName {
     Brie = 'Aged Brie',
     Pass = 'Backstage passes to a TAFKAL80ETC concert',
