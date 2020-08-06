@@ -18,7 +18,7 @@ You could write some unit tests yourself, using the requirements to identify sui
 
 Alternatively, use the "Text-Based" tests provided in this repository. (Read more about that in the next section)
 
-Whichever testing approach you choose, the idea of the exercise is to do some deliberate practice, and improve your skills at designing test cases and refactoring. The idea is not to re-write the code from scratch, but rather to practice designing tests, taking small steps, running the tests often, and incrementally improving the design. 
+Whichever testing approach you choose, the idea of the exercise is to do some deliberate practice, and improve your skills at designing test cases and refactoring. The idea is not to re-write the code from scratch, but rather to practice designing tests, taking small steps, running the tests often, and incrementally improving the design.
 
 ## Text-Based Approval Testing
 
@@ -28,26 +28,28 @@ This code comes with comprehensive tests that use this approach. For information
 
 I've also set this kata up on [cyber-dojo](https://cyber-dojo.org) for several languages, so you can get going really quickly:
 
-To create an *individual* exercise:
-- [C#, NUnit](https://cyber-dojo.org/forker/fork_individual/Fz4xFX?index=3)
-- [C++ (g++), GoogleTest](https://cyber-dojo.org/forker/fork_individual/qPPrZy?index=7)
-- [Java, Cucumber](https://cyber-dojo.org/forker/fork_individual/SvUf30?index=2) - for this one I've also written some step definitions for you
-- [Java, JUnit](https://cyber-dojo.org/forker/fork_individual/aJJEN4?index=2)
-- [Python, unittest](https://cyber-dojo.org/forker/fork_individual/NFgFys?index=2)
-- [Ruby, RSpec](https://cyber-dojo.org/forker/fork_individual/D3xbUV?index=3)
-- [Ruby, testunit](https://cyber-dojo.org/forker/fork_individual/zlElgj?index=9)
+To create an _individual_ exercise:
 
-To create a *group* exercise:
-- [C#, NUnit](https://cyber-dojo.org/forker/fork_group/Fz4xFX?index=3)
-- [C++ (g++), GoogleTest](https://cyber-dojo.org/forker/fork_group/qPPrZy?index=7)
-- [Java, Cucumber](https://cyber-dojo.org/forker/fork_group/SvUf30?index=2) - for this one I've also written some step definitions for you
-- [Java, JUnit](https://cyber-dojo.org/forker/fork_group/aJJEN4?index=2)
-- [Python, unittest](https://cyber-dojo.org/forker/fork_group/NFgFys?index=2)
-- [Ruby, RSpec](https://cyber-dojo.org/forker/fork_group/D3xbUV?index=3)
-- [Ruby, testunit](https://cyber-dojo.org/forker/fork_group/zlElgj?index=9)
+-   [C#, NUnit](https://cyber-dojo.org/forker/fork_individual/Fz4xFX?index=3)
+-   [C++ (g++), GoogleTest](https://cyber-dojo.org/forker/fork_individual/qPPrZy?index=7)
+-   [Java, Cucumber](https://cyber-dojo.org/forker/fork_individual/SvUf30?index=2) - for this one I've also written some step definitions for you
+-   [Java, JUnit](https://cyber-dojo.org/forker/fork_individual/aJJEN4?index=2)
+-   [Python, unittest](https://cyber-dojo.org/forker/fork_individual/NFgFys?index=2)
+-   [Ruby, RSpec](https://cyber-dojo.org/forker/fork_individual/D3xbUV?index=3)
+-   [Ruby, testunit](https://cyber-dojo.org/forker/fork_individual/zlElgj?index=9)
+
+To create a _group_ exercise:
+
+-   [C#, NUnit](https://cyber-dojo.org/forker/fork_group/Fz4xFX?index=3)
+-   [C++ (g++), GoogleTest](https://cyber-dojo.org/forker/fork_group/qPPrZy?index=7)
+-   [Java, Cucumber](https://cyber-dojo.org/forker/fork_group/SvUf30?index=2) - for this one I've also written some step definitions for you
+-   [Java, JUnit](https://cyber-dojo.org/forker/fork_group/aJJEN4?index=2)
+-   [Python, unittest](https://cyber-dojo.org/forker/fork_group/NFgFys?index=2)
+-   [Ruby, RSpec](https://cyber-dojo.org/forker/fork_group/D3xbUV?index=3)
+-   [Ruby, testunit](https://cyber-dojo.org/forker/fork_group/zlElgj?index=9)
 
 ## Better Code Hub
 
 I analysed this repo according to the clean code standards on [Better Code Hub](https://bettercodehub.com) just to get an independent opinion of how bad the code is. Perhaps unsurprisingly, the compliance score is low!
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/emilybache/GildedRose-Refactoring-Kata?branch=master)](https://bettercodehub.com/) 
+[![BCH compliance](https://bettercodehub.com/edge/badge/emilybache/GildedRose-Refactoring-Kata?branch=master)](https://bettercodehub.com/)
