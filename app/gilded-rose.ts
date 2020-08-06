@@ -15,7 +15,7 @@ export class ConjuredItem extends Item {
 }
 
 function isConjuredItem(item: Item): item is ConjuredItem {
-    return (item as any).conjured;
+    return (item as ConjuredItem).conjured;
 }
 
 export enum ItemName {
@@ -25,6 +25,11 @@ export enum ItemName {
 }
 
 type qualityFunc = (item: Item) => number;
+
+const clamp = (min: number, max: number) => (n: number) => Math.max(min, Math.min(max, n));
+
+// clamp between 0,50
+const clampFunc = (f: qualityFunc) => (item) => clamp(0, 50)(f(item));
 
 const nextQualityPass: qualityFunc = (item) => {
     if (item.sellIn <= 0) {
@@ -39,20 +44,24 @@ const nextQualityPass: qualityFunc = (item) => {
     return item.quality + 1;
 };
 
-// clamp between 0,50
-const clamp = (f: qualityFunc) => (item) => Math.max(0, Math.min(50, f(item)));
-
 export const nextQuality: qualityFunc = (item) => {
     const sDefault = Symbol();
 
     const itemNameQualityFuncMap = {
-        [ItemName.Brie]: clamp((item) => item.quality + (item.sellIn <= 0 ? 2 : 1)),
-        [ItemName.Pass]: clamp(nextQualityPass),
+        [ItemName.Brie]: clampFunc((item) => item.quality + (item.sellIn <= 0 ? 2 : 1)),
+        [ItemName.Pass]: clampFunc(nextQualityPass),
         [ItemName.Sulfuras]: (_) => 80,
-        [sDefault]: clamp((item) => item.quality - (item.sellIn > 0 ? 1 : 2)),
+        [sDefault]: clampFunc((item) => item.quality - (item.sellIn > 0 ? 1 : 2)),
     };
 
-    return (itemNameQualityFuncMap[item.name] || itemNameQualityFuncMap[sDefault])(item);
+    let quality = (itemNameQualityFuncMap[item.name] || itemNameQualityFuncMap[sDefault])(item);
+
+    // let conjured items degrade 2* as fast
+    if (isConjuredItem(item) && quality < item.quality) {
+        quality = clamp(0, 50)(2 * quality - item.quality);
+    }
+
+    return quality;
 };
 
 export const updateItem: (item: Item) => void = (item) => {
