@@ -6,7 +6,8 @@
     "precompile": "rimraf app/**/*.js test/**/*.js",
     "compile": "tsc",
     "pretest": "rimraf app/**/*.js test/**/*.js",
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "gen_golden_master": "ts-node test/golden-master-text-test.ts > test/fixtures/golden_master.txt"
   },
   "license": "MIT",
   "private": true,
